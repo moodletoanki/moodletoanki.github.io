@@ -1,372 +1,361 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moodle to Anki Exporter – Quiz Reviews to .apkg Flashcards</title>
-  <link rel="icon" type="image/png" href="logo.png">
-  <style>
-    :root {
-      --bg: #fafafa;
-      --surface: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #4b5563;
-      --accent: #dc2626;
-      --accent-dark: #991b1b;
-      --accent-soft: #fef2f2;
-      --ok-bg: #ecfdf5;
-      --ok-border: #10b981;
-      --ok-text: #065f46;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.6;
-      font-size: 15px;
-    }
-    code, pre {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.9em;
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
-
-    header.site-nav {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 60px;
-      gap: 16px;
-    }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 16px;
-    }
-    .brand:hover { text-decoration: none; }
-    .brand img { width: 28px; height: 28px; border-radius: 6px; }
-    .nav-links { display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
-    .nav-links a { color: var(--muted); }
-    .nav-links a:hover { color: var(--text); }
-
-    .hero { padding: 52px 0 36px; }
-    .hero h1 {
-      font-size: clamp(28px, 4vw, 40px);
-      line-height: 1.18;
-      letter-spacing: -0.02em;
-      margin: 0 0 14px;
-      max-width: 720px;
-    }
-    .hero p.lead {
-      margin: 0 0 24px;
-      color: var(--muted);
-      font-size: 17px;
-      max-width: 680px;
-    }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-    .btn {
-      display: inline-block;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: var(--accent-dark); text-decoration: none; }
-    .btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-    .btn-outline:hover { background: #f3f4f6; text-decoration: none; }
-    .meta-note { font-size: 13px; color: var(--muted); margin-top: 12px; }
-
-    .preview-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin: 24px 0 48px;
-    }
-    @media (max-width: 720px) {
-      .preview-grid { grid-template-columns: 1fr; }
-      .nav-links { gap: 12px; font-size: 13px; }
-    }
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .panel-head {
-      background: #f3f4f6;
-      border-bottom: 1px solid var(--border);
-      padding: 8px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-    }
-    .panel-body { padding: 16px; }
-    .moodle-q { font-weight: 600; margin-bottom: 10px; font-size: 14px; }
-    .moodle-opt {
-      padding: 6px 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      margin-bottom: 6px;
-      font-size: 13px;
-      background: #fff;
-    }
-    .moodle-opt.wrong { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
-    .moodle-ra {
-      margin-top: 10px;
-      padding: 8px 10px;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #92400e;
-    }
-    .anki-source {
-      font-size: 11px;
-      font-weight: 700;
-      color: #6b7280;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
-    }
-    .anki-opt-ok {
-      background: var(--ok-bg);
-      border-color: var(--ok-border);
-      color: var(--ok-text);
-      font-weight: 600;
-    }
-    .anki-hr { border: none; border-top: 1px dashed var(--border); margin: 12px 0; }
-    .anki-note {
-      font-size: 12px;
-      color: #1e40af;
-      background: #eff6ff;
-      padding: 7px 10px;
-      border-radius: 6px;
-      margin-top: 8px;
-    }
-
-    section.block { padding: 32px 0; border-top: 1px solid var(--border); }
-    section.block h2 { font-size: 22px; margin: 0 0 18px; letter-spacing: -0.01em; }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 16px;
-    }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-    }
-    .card h3 { margin: 0 0 6px; font-size: 15px; }
-    .card p { margin: 0; color: var(--muted); font-size: 14px; }
-
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      max-width: 780px;
-    }
-    @media (max-width: 680px) { .pricing-grid { grid-template-columns: 1fr; } }
-    .price-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-    }
-    .price-card.featured { border: 2px solid var(--accent); }
-    .price-amount { font-size: 28px; font-weight: 800; margin: 6px 0 12px; }
-    .price-amount span { font-size: 14px; font-weight: 500; color: var(--muted); }
-    .price-card ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; }
-    .price-card li { margin-bottom: 6px; }
-
-    details {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-    }
-    summary { font-weight: 600; cursor: pointer; }
-    details p { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
-
-    footer.site-footer {
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 24px 0;
-      margin-top: 32px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .footer-inner {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .footer-links { display: flex; gap: 16px; }
-  </style>
+  <title>Quiz Exporter for Moodle &amp; Anki — Turn Quizzes into .apkg Decks</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
 </head>
-<body>
-  <header class="site-nav">
-    <div class="container nav-inner">
-      <a class="brand" href="index.html">
-        <img src="logo.png" alt="Moodle to Anki logo">
-        <span>Moodle to Anki Exporter</span>
+<body class="bg-[#09090B] text-zinc-100 font-sans antialiased selection:bg-white/20 selection:text-white">
+
+  <!-- Minimalist Sticky Navbar -->
+  <header class="sticky top-0 z-50 border-b border-white/[0.06] bg-[#09090B]/80 backdrop-blur-md">
+    <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <a href="index.html" class="flex items-center gap-3 text-sm font-semibold tracking-tight text-white">
+        <img src="assets/logo.svg" alt="Quiz Exporter logo" class="h-7 w-7 rounded-md">
+        <span>Quiz Exporter</span>
       </a>
-      <nav class="nav-links">
-        <a href="#how-it-works">How it works</a>
-        <a href="#pricing">Pricing</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
+
+      <nav class="hidden items-center gap-8 text-sm text-[#A1A1AA] sm:flex">
+        <a href="#features" class="transition-colors hover:text-white">Features</a>
+        <a href="#pricing" class="transition-colors hover:text-white">Pricing</a>
+        <a href="privacy.html" class="transition-colors hover:text-white">Privacy</a>
       </nav>
+
+      <a href="#pricing" class="rounded-lg bg-white px-3.5 py-1.5 text-xs font-semibold text-[#09090B] transition-colors hover:bg-zinc-200">
+        Add to Chrome
+      </a>
     </div>
   </header>
 
-  <main class="container">
-    <section class="hero">
-      <h1>Convert completed Moodle quizzes into Anki <code>.apkg</code> decks in one click.</h1>
-      <p class="lead">
-        A local browser extension for Chrome and Firefox that parses finished Moodle quiz reviews (<code>/mod/quiz/review.php</code>)—preserving images, MathJax formulas, and instructor feedback—without sending university data to external servers.
+  <!-- Hero Section with subtle radial glow -->
+  <section class="relative overflow-hidden pt-20 pb-24 sm:pt-28 sm:pb-32">
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-x-0 top-0 h-[480px]"
+      style="background: radial-gradient(ellipse 65% 50% at 50% 0%, rgba(226, 232, 240, 0.08), transparent 72%);"
+    ></div>
+
+    <div class="relative mx-auto max-w-5xl px-6 text-center">
+      <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-[#111114] px-3 py-1 text-xs font-medium text-[#A1A1AA]">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+        Chrome &amp; Firefox &middot; Works on Moodle 3.x / 4.x / 5.x
+      </div>
+
+      <h1 class="mx-auto max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl sm:leading-[1.08]">
+        Turn Moodle Quizzes into Anki Decks in 1 Click.
+      </h1>
+
+      <p class="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-[#A1A1AA] sm:text-lg">
+        Export completed quiz reviews with images and MathJax directly to <code class="rounded bg-white/[0.06] px-1.5 py-0.5 font-mono text-sm text-zinc-200">.apkg</code>. 100% local in your browser.
       </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#pricing">Get Started (Free / Pro)</a>
-        <a class="btn btn-outline" href="https://github.com/moodletoanki/moodletoanki.github.io/issues" target="_blank" rel="noopener">Support &amp; Theme Reports</a>
-      </div>
-      <p class="meta-note">Works offline inside your browser using SQLite WebAssembly (<code>sql.js</code>) and <code>JSZip</code>. Compatible with Moodle 3.x, 4.x, and 5.x.</p>
-    </section>
 
-    <section aria-label="Before and after preview" class="preview-grid">
-      <div class="panel">
-        <div class="panel-head">
-          <span>Input: Moodle Quiz Review</span>
-          <code>/mod/quiz/review.php</code>
-        </div>
-        <div class="panel-body">
-          <div class="moodle-q">Evaluate \(\frac{d}{dx}(e^{2x})\) and select the matching derivative:</div>
-          <div class="moodle-opt wrong">a. \(e^{2x}\) &times;</div>
-          <div class="moodle-opt">b. \(2e^{2x}\)</div>
-          <div class="moodle-opt">c. \(2xe^{2x}\)</div>
-          <div class="moodle-ra">The correct answer is: \(2e^{2x}\)</div>
-        </div>
+      <div class="mt-9 flex flex-wrap items-center justify-center gap-3.5">
+        <a
+          href="#pricing"
+          class="inline-flex items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-[#09090B] transition-colors hover:bg-zinc-200"
+        >
+          Add to Chrome &mdash; Free
+        </a>
+        <a
+          href="#pricing"
+          class="inline-flex items-center justify-center rounded-lg border border-white/[0.12] bg-[#111114] px-5 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:border-white/[0.24] hover:text-white"
+        >
+          Get Lifetime Pro &mdash; $5.99
+        </a>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <span>Output: Ready Anki Card (.apkg)</span>
-          <code>Calculus :: Midterm</code>
+      <!-- DEMO MEDIA SLOT: Replace the inner mockup container below with <img src="assets/demo.gif"> or <video autoplay loop muted playsinline> once recorded -->
+      <div class="mt-16 rounded-2xl border border-white/[0.08] bg-[#111114] p-2 shadow-2xl shadow-black/60">
+        <!-- Browser Chrome Bar -->
+        <div class="flex items-center justify-between border-b border-white/[0.06] px-4 py-2.5">
+          <div class="flex items-center gap-1.5">
+            <span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span>
+          </div>
+          <div class="rounded-md border border-white/[0.06] bg-[#09090B] px-4 py-1 font-mono text-[11px] text-[#A1A1AA]">
+            moodle.university.edu/mod/quiz/review.php?attempt=48192
+          </div>
+          <div class="flex items-center gap-1.5">
+            <img src="assets/logo.svg" alt="" class="h-4 w-4 rounded-sm">
+          </div>
         </div>
-        <div class="panel-body">
-          <div class="anki-source">Calculus :: Midterm</div>
-          <div class="moodle-q">Evaluate \(\frac{d}{dx}(e^{2x})\) and select the matching derivative:</div>
-          <hr class="anki-hr">
-          <div class="moodle-opt">A. \(e^{2x}\)</div>
-          <div class="moodle-opt anki-opt-ok">B. \(2e^{2x}\) &#10003;</div>
-          <div class="moodle-opt">C. \(2xe^{2x}\)</div>
-          <div class="anki-note">MathJax TeX syntax and authenticated <code>pluginfile.php</code> images are bundled directly into the deck.</div>
+
+        <!-- Split Workspace Preview -->
+        <div class="grid gap-3 p-4 text-left md:grid-cols-12">
+          <!-- Left: Moodle Review Page Mockup -->
+          <div class="rounded-xl border border-white/[0.06] bg-[#09090B] p-5 md:col-span-7">
+            <div class="mb-3 flex items-center justify-between text-xs text-zinc-500">
+              <span>Question 14 &middot; Graded</span>
+              <span class="rounded border border-white/[0.08] px-2 py-0.5 font-mono text-[10px] text-zinc-400">showall=1</span>
+            </div>
+            <p class="text-sm font-medium leading-relaxed text-zinc-100">
+              Given the diagram below and <span class="font-mono text-zinc-300">&Delta;G = &Delta;H &minus; T&Delta;S</span>, when is the reaction spontaneous at all temperatures?
+            </p>
+            <div class="my-3.5 flex items-center gap-3 rounded-lg border border-white/[0.06] bg-[#111114] p-3">
+              <div class="flex h-11 w-14 shrink-0 items-center justify-center rounded border border-white/[0.08] bg-zinc-900 font-mono text-[10px] text-zinc-400">
+                IMG.png
+              </div>
+              <div class="text-xs text-[#A1A1AA]">
+                Authenticated <code class="text-zinc-300">pluginfile.php</code> diagram fetched in-session and bundled offline into <code class="text-zinc-300">.apkg</code>.
+              </div>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="rounded-lg border border-white/[0.06] bg-[#111114] px-3 py-2 text-[#A1A1AA]">
+                a. &Delta;H &gt; 0 and &Delta;S &lt; 0
+              </div>
+              <div class="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 font-medium text-emerald-300">
+                b. &Delta;H &lt; 0 and &Delta;S &gt; 0 &nbsp;&#10003;
+              </div>
+              <div class="rounded-lg border border-white/[0.06] bg-[#111114] px-3 py-2 text-[#A1A1AA]">
+                c. &Delta;H &gt; 0 and &Delta;S &gt; 0
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Extension Side Panel Mockup -->
+          <div class="flex flex-col justify-between rounded-xl border border-white/[0.08] bg-[#141418] p-4 md:col-span-5">
+            <div>
+              <div class="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                <div class="flex items-center gap-2">
+                  <img src="assets/logo.svg" alt="" class="h-5 w-5 rounded">
+                  <span class="text-xs font-semibold text-white">Quiz Exporter</span>
+                  <span class="rounded-full border border-white/[0.12] bg-white/[0.06] px-2 py-0.5 text-[10px] font-semibold text-zinc-200">PRO</span>
+                </div>
+                <span class="font-mono text-[11px] text-zinc-500">36 / 36</span>
+              </div>
+
+              <div class="mt-3 space-y-2.5">
+                <div>
+                  <div class="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Anki Deck</div>
+                  <div class="mt-1 rounded-md border border-white/[0.08] bg-[#09090B] px-2.5 py-1.5 text-xs text-zinc-200">
+                    Biochemistry :: Midterm 2026
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-[#A1A1AA]">
+                  <span>Embedded images</span>
+                  <span class="font-mono text-zinc-200">12 PNGs</span>
+                </div>
+
+                <div class="space-y-1.5 pt-1">
+                  <div class="rounded-lg border border-white/[0.06] bg-[#09090B] px-3 py-2">
+                    <div class="text-[11px] font-medium text-zinc-200">#14 &middot; &Delta;G = &Delta;H &minus; T&Delta;S spontaneity</div>
+                    <div class="mt-0.5 text-[11px] text-emerald-400">&rarr; &Delta;H &lt; 0 and &Delta;S &gt; 0</div>
+                  </div>
+                  <div class="rounded-lg border border-white/[0.06] bg-[#09090B] px-3 py-2">
+                    <div class="text-[11px] font-medium text-zinc-200">#15 &middot; Michaelis-Menten kinetics</div>
+                    <div class="mt-0.5 text-[11px] text-emerald-400">&rarr; Competitive inhibitor increases Km</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-lg bg-white py-2 text-center text-xs font-semibold text-[#09090B]">
+              Download .apkg (36 cards)
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="how-it-works" class="block">
-      <h2>What it handles cleanly</h2>
-      <div class="features-grid">
-        <div class="card">
-          <h3>Real <code>.apkg</code> packages, not broken CSV</h3>
-          <p>Builds a valid SQLite <code>collection.anki2</code> database and media manifest locally so you double-click once and Anki imports everything.</p>
+  <!-- Bento Grid (4 Feature Tiles) -->
+  <section id="features" class="border-t border-white/[0.06] py-24">
+    <div class="mx-auto max-w-5xl px-6">
+      <div class="max-w-xl">
+        <h2 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          Built for exam prep, not broken copy-paste.
+        </h2>
+        <p class="mt-3 text-sm leading-relaxed text-[#A1A1AA] sm:text-base">
+          Everything runs inside Chrome's Side Panel so large quizzes never interrupt mid-export.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-2xl border border-white/[0.08] bg-[#111114] p-7 transition-colors hover:border-white/[0.18]">
+          <div class="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-[#09090B] text-zinc-200">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold tracking-tight text-white">Native .apkg Export</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+            Generates a real SQLite <code class="font-mono text-zinc-300">collection.anki2</code> database via WebAssembly. Double-click once and Anki imports the deck immediately—zero CSV column mapping.
+          </p>
         </div>
-        <div class="card">
-          <h3>Authenticated Moodle images</h3>
-          <p>Moodle stores diagrams behind login-protected <code>pluginfile.php</code> URLs. The extension fetches them using your active browser session and embeds them inside the <code>.apkg</code>.</p>
+
+        <div class="rounded-2xl border border-white/[0.08] bg-[#111114] p-7 transition-colors hover:border-white/[0.18]">
+          <div class="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-[#09090B] text-zinc-200">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold tracking-tight text-white">Embedded Images &amp; MathJax</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+            Downloads login-gated <code class="font-mono text-zinc-300">pluginfile.php</code> images using your active session and restores MathJax v2/v3 shells to native Anki <code class="font-mono text-zinc-300">\( ... \)</code> syntax.
+          </p>
         </div>
-        <div class="card">
-          <h3>MathJax &amp; TeX preservation</h3>
-          <p>Extracts original TeX from rendered MathJax v2/v3 shells into native Anki <code>\(...\)</code> and <code>\[...\]</code> delimiters instead of broken HTML spans.</p>
+
+        <div class="rounded-2xl border border-white/[0.08] bg-[#111114] p-7 transition-colors hover:border-white/[0.18]">
+          <div class="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-[#09090B] text-zinc-200">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold tracking-tight text-white">100% Local &amp; Private</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+            No backend servers, no analytics, and no broad <code class="font-mono text-zinc-300">&lt;all_urls&gt;</code> permissions. Your university quizzes never leave your computer.
+          </p>
         </div>
-        <div class="card">
-          <h3>Multi-page &amp; hidden-key fallback</h3>
-          <p>Automatically loads multi-page reviews (<code>showall=1</code> or pagination). If an instructor disables <code>.rightanswer</code>, click A/B/C/D right inside the side panel before export.</p>
-        </div>
-        <div class="card">
-          <h3>Multilingual Moodle themes</h3>
-          <p>Relies on core Moodle DOM classes (<code>.que</code>, <code>.qtext</code>, <code>.answer</code>) across custom themes and supports English, Polish, German, Spanish, and French answer labels.</p>
-        </div>
-        <div class="card">
-          <h3>Post-quiz study only</h3>
-          <p>Designed specifically for reviewing completed attempts and past exams. Uses minimal permissions (<code>activeTab</code>, <code>scripting</code>, <code>sidePanel</code>) with zero background tracking.</p>
+
+        <div class="rounded-2xl border border-white/[0.08] bg-[#111114] p-7 transition-colors hover:border-white/[0.18]">
+          <div class="mb-4 flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-[#09090B] text-zinc-200">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+            </svg>
+          </div>
+          <h3 class="text-base font-semibold tracking-tight text-white">Multi-Page Quiz Support</h3>
+          <p class="mt-2 text-sm leading-relaxed text-[#A1A1AA]">
+            Automatically pulls full attempts via Moodle's <code class="font-mono text-zinc-300">showall=1</code> or pagination links—and lets you pick A/B/C/D manually if an instructor hides answer keys.
+          </p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="pricing" class="block">
-      <h2>Simple Pricing</h2>
-      <div class="pricing-grid">
-        <div class="price-card">
-          <h3>Free</h3>
-          <div class="price-amount">$0</div>
-          <ul>
-            <li>Up to 15 flashcards per quiz export</li>
-            <li>Multiple choice, True/False, Short answer &amp; Matching</li>
-            <li>Quiz (A/B/C/D) and Q&rarr;A card layouts</li>
-            <li>MathJax TeX restoration</li>
-          </ul>
+  <!-- Pricing Section -->
+  <section id="pricing" class="border-t border-white/[0.06] py-24">
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="text-center">
+        <h2 class="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          Simple, student-friendly pricing.
+        </h2>
+        <p class="mt-3 text-sm text-[#A1A1AA] sm:text-base">
+          Try it free on your university's Moodle theme first. Upgrade once if you need unlimited cards and images.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-2">
+        <!-- Free Plan -->
+        <div class="flex flex-col justify-between rounded-2xl border border-white/[0.08] bg-[#111114] p-8 transition-colors hover:border-white/[0.16]">
+          <div>
+            <div class="text-sm font-medium text-[#A1A1AA]">Free</div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">$0</span>
+              <span class="text-sm text-zinc-500">forever</span>
+            </div>
+            <p class="mt-3 text-sm text-[#A1A1AA]">
+              Verify compatibility with your Moodle theme in 10 seconds.
+            </p>
+
+            <ul class="mt-7 space-y-3 text-sm text-zinc-300">
+              <li class="flex items-center gap-2.5">
+                <span class="text-zinc-400">&#10003;</span>
+                Up to 15 flashcards per quiz export
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-zinc-400">&#10003;</span>
+                Text-only questions &amp; answers
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-zinc-400">&#10003;</span>
+                Quiz (A/B/C/D) &amp; Q&rarr;A card layouts
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-zinc-400">&#10003;</span>
+                MathJax TeX restoration
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="#pricing"
+            class="mt-8 block w-full rounded-lg border border-white/[0.12] bg-[#09090B] py-2.5 text-center text-sm font-medium text-zinc-200 transition-colors hover:border-white/[0.25] hover:text-white"
+          >
+            Add to Chrome &mdash; Free
+          </a>
         </div>
-        <div class="price-card featured">
-          <h3>Pro License</h3>
-          <div class="price-amount">$6 <span>one-time payment</span></div>
-          <ul>
-            <li>Unlimited flashcards per quiz and multi-page support</li>
-            <li>Automatic Moodle image embedding (<code>pluginfile.php</code>)</li>
-            <li>Clean deck metadata without promotional footer tag</li>
-            <li>Valid on up to 2 personal devices (handled by Polar.sh)</li>
-          </ul>
+
+        <!-- Pro Lifetime Plan -->
+        <div class="flex flex-col justify-between rounded-2xl border border-white/20 bg-[#111114] p-8 transition-colors hover:border-white/30">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-white">Pro Lifetime</span>
+              <span class="rounded-full border border-white/[0.12] bg-white/[0.06] px-2.5 py-0.5 text-[11px] font-medium text-zinc-200">
+                No subscription
+              </span>
+            </div>
+            <div class="mt-2 flex items-baseline gap-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">$5.99</span>
+              <span class="text-sm text-zinc-500">one-time</span>
+            </div>
+            <p class="mt-3 text-sm text-[#A1A1AA]">
+              Full exam-prep power. Pay once, keep it across semesters.
+            </p>
+
+            <ul class="mt-7 space-y-3 text-sm text-zinc-200">
+              <li class="flex items-center gap-2.5">
+                <span class="text-white">&#10003;</span>
+                Unlimited flashcards per quiz
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-white">&#10003;</span>
+                Embedded Moodle images (<code class="font-mono text-xs text-zinc-400">pluginfile.php</code>)
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-white">&#10003;</span>
+                MathJax &amp; multi-page quiz support
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="text-white">&#10003;</span>
+                Activate on up to 3 devices
+              </li>
+            </ul>
+          </div>
+
+          <a
+            href="terms.html"
+            class="mt-8 block w-full rounded-lg bg-white py-2.5 text-center text-sm font-semibold text-[#09090B] transition-colors hover:bg-zinc-200"
+          >
+            Get Lifetime Pro &mdash; $5.99
+          </a>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="block">
-      <h2>FAQ</h2>
-      <details>
-        <summary>Can my university or instructor see that I exported a quiz?</summary>
-        <p>No. The extension only reads the already-loaded HTML DOM in your browser after clicking Scan (and fetches quiz images or <code>showall=1</code> pages using standard browser requests, identical to clicking pages normally).</p>
-      </details>
-      <details>
-        <summary>Is any quiz content uploaded to your servers?</summary>
-        <p>No. All HTML parsing, image bundling, SQLite database creation, and ZIP packaging run 100% locally in your browser. See the <a href="privacy.html">Privacy Policy</a>.</p>
-      </details>
-      <details>
-        <summary>What if a custom university Moodle theme breaks parsing?</summary>
-        <p>Open an issue via the <a href="https://github.com/moodletoanki/moodletoanki.github.io/issues" target="_blank" rel="noopener">Support page</a> with an anonymized sample of the <code>.que</code> HTML block, or request a full refund within 14 days under our <a href="terms.html">Refund Policy</a>.</p>
-      </details>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <span>Moodle to Anki Exporter &mdash; Not affiliated with Moodle Pty Ltd or Anki.</span>
-      <div class="footer-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms &amp; Refunds</a>
-        <a href="mailto:moodletoanki@gmail.com">moodletoanki@gmail.com</a>
+  <!-- Footer -->
+  <footer class="border-t border-white/[0.06] py-12 text-xs text-[#A1A1AA]">
+    <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-6 sm:flex-row sm:items-center">
+      <div>
+        <span class="font-medium text-zinc-300">Quiz Exporter for Moodle &amp; Anki</span>
+        <span class="mx-2 text-zinc-700">&middot;</span>
+        <span>Independent study tool. Not affiliated with Moodle Pty Ltd or Anki.</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-6">
+        <a href="privacy.html" class="transition-colors hover:text-white">Privacy Policy</a>
+        <a href="terms.html" class="transition-colors hover:text-white">Terms &amp; Refunds</a>
+        <a href="mailto:moodletoanki.help@gmail.com" class="transition-colors hover:text-white">moodletoanki.help@gmail.com</a>
       </div>
     </div>
   </footer>
+
 </body>
 </html>

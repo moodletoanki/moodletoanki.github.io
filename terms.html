@@ -1,122 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Service &amp; Refund Policy – Moodle to Anki Exporter</title>
-  <link rel="icon" type="image/png" href="logo.png">
-  <style>
-    :root {
-      --bg: #fafafa;
-      --surface: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #4b5563;
-      --accent: #dc2626;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: var(--text);
-      background: var(--bg);
-      line-height: 1.65;
-      font-size: 15px;
-    }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; background: #f3f4f6; padding: 1px 5px; border-radius: 4px; }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    .container { max-width: 820px; margin: 0 auto; padding: 0 20px; }
-    header.site-nav { background: var(--surface); border-bottom: 1px solid var(--border); }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 16px; }
-    .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 16px; }
-    .brand:hover { text-decoration: none; }
-    .brand img { width: 28px; height: 28px; border-radius: 6px; }
-    .nav-links { display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
-    .nav-links a { color: var(--muted); }
-    .nav-links a:hover { color: var(--text); }
-    main.doc {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 32px;
-      margin: 32px auto;
-    }
-    h1 { margin-top: 0; font-size: 28px; letter-spacing: -0.01em; }
-    h2 { margin-top: 28px; font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-    footer.site-footer {
-      border-top: 1px solid var(--border);
-      background: var(--surface);
-      padding: 24px 0;
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
-    .footer-links { display: flex; gap: 16px; }
-  </style>
+  <title>Terms &amp; Refund Policy — Quiz Exporter for Moodle &amp; Anki</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
 </head>
-<body>
-  <header class="site-nav">
-    <div class="container nav-inner">
-      <a class="brand" href="index.html">
-        <img src="logo.png" alt="Moodle to Anki logo">
-        <span>Moodle to Anki Exporter</span>
+<body class="bg-[#09090B] text-zinc-100 font-sans antialiased">
+  <header class="border-b border-white/[0.06] bg-[#09090B]/80 backdrop-blur-md">
+    <div class="mx-auto flex h-16 max-w-4xl items-center justify-between px-6">
+      <a href="index.html" class="flex items-center gap-3 text-sm font-semibold tracking-tight text-white">
+        <img src="assets/logo.svg" alt="Quiz Exporter logo" class="h-7 w-7 rounded-md">
+        <span>Quiz Exporter</span>
       </a>
-      <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
+      <nav class="flex items-center gap-6 text-sm text-[#A1A1AA]">
+        <a href="index.html" class="transition-colors hover:text-white">Home</a>
+        <a href="privacy.html" class="transition-colors hover:text-white">Privacy</a>
+        <a href="terms.html" class="text-white">Terms</a>
       </nav>
     </div>
   </header>
 
-  <div class="container">
-    <main class="doc">
-      <h1>Terms of Service &amp; Refund Policy</h1>
-      <p><strong>Effective Date:</strong> November 24, 2026</p>
+  <main class="mx-auto max-w-4xl px-6 py-16">
+    <div class="rounded-2xl border border-white/[0.08] bg-[#111114] p-8 sm:p-10">
+      <h1 class="text-3xl font-semibold tracking-tight text-white">Terms of Service &amp; Refund Policy</h1>
+      <p class="mt-2 text-sm text-[#A1A1AA]">Effective Date: November 25, 2026</p>
 
-      <h2>1. Intended Use</h2>
-      <p>
-        Moodle to Anki Exporter is a personal study utility designed to convert completed Moodle quiz reviews (<code>/mod/quiz/review.php</code>) into Anki <code>.apkg</code> flashcards for spaced repetition. You are responsible for ensuring your personal study exports comply with your institution's academic policies and course material copyright rules.
-      </p>
-      <p>
-        Moodle to Anki Exporter is an independent project and is not affiliated with, endorsed by, or sponsored by Moodle Pty Ltd or Anki (Ankitects Pty Ltd).
-      </p>
+      <div class="mt-8 space-y-8 text-sm leading-relaxed text-[#A1A1AA]">
+        <section>
+          <h2 class="mb-2 text-base font-semibold text-white">1. Intended Use</h2>
+          <p>
+            Quiz Exporter for Moodle &amp; Anki is a personal study utility designed to convert completed Moodle quiz reviews (<code class="font-mono text-zinc-300">/mod/quiz/review.php</code>) into Anki <code class="font-mono text-zinc-300">.apkg</code> flashcards for spaced repetition. You are responsible for complying with your institution's academic policies and course material rules.
+          </p>
+          <p class="mt-2">
+            This project is independent and not affiliated with, endorsed by, or sponsored by Moodle Pty Ltd or Anki (Ankitects Pty Ltd).
+          </p>
+        </section>
 
-      <h2>2. Pro License Terms</h2>
-      <ul>
-        <li><strong>One-Time Purchase:</strong> A Pro license ($6 USD, plus applicable local VAT/sales tax handled by Polar.sh) grants a perpetual license for the current major version of the extension without recurring subscription fees.</li>
-        <li><strong>Device Limit:</strong> Each license key may be activated on up to <strong>2 personal browser installations</strong> (for example, your laptop and desktop computer). Sharing or publishing license keys publicly is prohibited and may result in key revocation.</li>
-        <li><strong>Merchant of Record:</strong> All payments, invoices/receipts, and tax handling are processed by Polar.sh as the Merchant of Record.</li>
-      </ul>
+        <section>
+          <h2 class="mb-2 text-base font-semibold text-white">2. Pro Lifetime License ($5.99)</h2>
+          <ul class="list-disc space-y-2 pl-5">
+            <li><strong class="text-zinc-200">One-Time Purchase:</strong> A Pro license ($5.99 USD, plus applicable local VAT/sales tax handled by Polar.sh) unlocks unlimited exports, embedded images, and MathJax preservation with zero recurring subscription fees.</li>
+            <li><strong class="text-zinc-200">3-Device Limit:</strong> Each license key can be activated on up to <strong class="text-zinc-200">3 personal browser installations</strong>. You can deactivate an old device inside the extension or Polar Customer Portal at any time. Publicly sharing keys is prohibited.</li>
+            <li><strong class="text-zinc-200">Merchant of Record:</strong> All checkout payments, receipts, and tax handling are processed by Polar.sh.</li>
+          </ul>
+        </section>
 
-      <h2>3. 14-Day Refund Policy</h2>
-      <p>
-        Universities use customized Moodle themes and plugins. If Moodle to Anki Exporter fails to parse your university's completed quiz review page or embed images properly and we cannot provide a working fix, you are entitled to a <strong>full 100% refund within 14 days of purchase</strong>.
-      </p>
-      <p>
-        To request a refund, email <a href="mailto:moodletoanki@gmail.com">moodletoanki@gmail.com</a> from your purchase email address (or include your Polar order ID). Refunds are processed back to your original payment method via Polar.sh.
-      </p>
+        <section>
+          <h2 class="mb-2 text-base font-semibold text-white">3. 14-Day Refund Policy</h2>
+          <p>
+            Universities use customized Moodle themes. If Quiz Exporter fails to parse your university's completed quiz review page or embed images properly and we cannot resolve the issue, you are entitled to a <strong class="text-zinc-200">full 100% refund within 14 days of purchase</strong>. Email <a href="mailto:moodletoanki.help@gmail.com" class="text-white underline underline-offset-4">moodletoanki.help@gmail.com</a> with your order ID to request a refund via Polar.sh.
+          </p>
+        </section>
 
-      <h2>4. Disclaimer of Warranty</h2>
-      <p>
-        The software is provided "as is", without warranty of any kind. Always verify critical exam formulas and answers inside Anki after importing.
-      </p>
+        <section>
+          <h2 class="mb-2 text-base font-semibold text-white">4. Disclaimer</h2>
+          <p>
+            The software is provided "as is", without warranty of any kind. Always verify critical exam formulas and answers inside Anki after importing.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
 
-      <h2>5. Contact</h2>
-      <p>
-        Questions or support requests: <a href="mailto:moodletoanki@gmail.com">moodletoanki@gmail.com</a> or <a href="https://github.com/moodletoanki/moodletoanki.github.io/issues" target="_blank" rel="noopener">GitHub Issues</a>.
-      </p>
-    </main>
-  </div>
-
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <span>Moodle to Anki Exporter</span>
-      <div class="footer-links">
-        <a href="index.html">Home</a>
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="mailto:moodletoanki@gmail.com">moodletoanki@gmail.com</a>
+  <footer class="border-t border-white/[0.06] py-10 text-xs text-[#A1A1AA]">
+    <div class="mx-auto flex max-w-4xl flex-wrap justify-between gap-4 px-6">
+      <span>Quiz Exporter for Moodle &amp; Anki</span>
+      <div class="flex gap-6">
+        <a href="index.html" class="hover:text-white">Home</a>
+        <a href="privacy.html" class="hover:text-white">Privacy Policy</a>
+        <a href="mailto:moodletoanki.help@gmail.com" class="hover:text-white">moodletoanki.help@gmail.com</a>
       </div>
     </div>
   </footer>
