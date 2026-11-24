@@ -4,35 +4,152 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy – Moodle to Anki Exporter</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; color: #0f172a; background: #f8fafc; line-height: 1.6; }
-    .wrap { max-width: 780px; margin: 48px auto; padding: 32px; background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; }
-    h1 { margin-top: 0; color: #1e3a8a; }
-    h2 { margin-top: 24px; font-size: 18px; }
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #4b5563;
+      --accent: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; background: #f3f4f6; padding: 1px 5px; border-radius: 4px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 820px; margin: 0 auto; padding: 0 20px; }
+    header.site-nav { background: var(--surface); border-bottom: 1px solid var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 16px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 16px; }
+    .brand:hover { text-decoration: none; }
+    .brand img { width: 28px; height: 28px; border-radius: 6px; }
+    .nav-links { display: flex; gap: 20px; font-size: 14px; font-weight: 500; }
+    .nav-links a { color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    main.doc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin: 32px auto;
+    }
+    h1 { margin-top: 0; font-size: 28px; letter-spacing: -0.01em; }
+    h2 { margin-top: 28px; font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+    th, td { text-align: left; padding: 10px; border: 1px solid var(--border); vertical-align: top; }
+    th { background: #f9fafb; font-weight: 600; }
+    footer.site-footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 24px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+    .footer-links { display: flex; gap: 16px; }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <h1>Privacy Policy</h1>
-    <p><strong>Effective date:</strong> November 24, 2026</p>
-    <p><strong>Moodle to Anki Exporter</strong> operates entirely locally inside your web browser.</p>
+  <header class="site-nav">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html">
+        <img src="logo.png" alt="Moodle to Anki logo">
+        <span>Moodle to Anki Exporter</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+      </nav>
+    </div>
+  </header>
 
-    <h2>1. Data We Do Not Collect</h2>
-    <p>We do not collect, transmit, store, or sell your university quiz questions, answers, grades, Moodle session cookies, browsing history, or personal identity on any external server.</p>
+  <div class="container">
+    <main class="doc">
+      <h1>Privacy Policy</h1>
+      <p><strong>Effective Date:</strong> November 24, 2026 &middot; <strong>Product:</strong> Moodle to Anki Exporter (Browser Extension)</p>
 
-    <h2>2. Local Processing &amp; Permissions</h2>
-    <ul>
-      <li><code>activeTab</code> &amp; <code>scripting</code>: Used strictly when you click the extension icon and trigger a scan on the current Moodle quiz review page to read question DOM elements and fetch embedded quiz images directly in your browser.</li>
-      <li><code>sidePanel</code>: Displays the interactive preview before generating your <code>.apkg</code> deck.</li>
-      <li><code>downloads</code>: Saves the locally built <code>.apkg</code> file to your Downloads folder.</li>
-      <li><code>storage</code>: Stores your UI language preference, export counter, and optional Pro license key locally in your browser profile.</li>
-    </ul>
+      <h2>1. Overview &amp; Local-Only Architecture</h2>
+      <p>
+        Moodle to Anki Exporter is built with a strict local-first architecture. All quiz parsing, image bundling, SQLite database creation (<code>collection.anki2</code>), and <code>.apkg</code> archive packaging happen exclusively inside your browser memory.
+      </p>
+      <p>
+        We do <strong>not</strong> operate any backend database for quiz content, and we do <strong>not</strong> collect, log, store, sell, or share your Moodle URLs, session cookies, quiz questions, answers, grades, or personal identity. The extension uses zero third-party analytics, tracking pixels, or advertising SDKs.
+      </p>
 
-    <h2>3. Optional Pro License Verification</h2>
-    <p>If you choose to enter a Pro license key, only the license key string is sent to the Polar.sh License Validation API (<code>https://api.polar.sh</code>) to verify activation status. No quiz content or Moodle URLs are included in that request.</p>
+      <h2>2. Browser Permissions Explained</h2>
+      <p>The extension requests only minimal, user-triggered permissions (no broad <code>&lt;all_urls&gt;</code> host access):</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>activeTab</code> &amp; <code>scripting</code></td>
+            <td>Invoked strictly when you click the extension icon and press <em>Scan Active Moodle Tab</em>. Reads quiz question blocks (<code>.que</code>) from the active page, optionally fetches paginated review pages (<code>showall=1</code>), and fetches embedded quiz images from your active session so they can be packaged offline into the <code>.apkg</code> file.</td>
+          </tr>
+          <tr>
+            <td><code>sidePanel</code></td>
+            <td>Renders the interactive preview panel where you select questions, review math/answers, and trigger download without closing on background clicks.</td>
+          </tr>
+          <tr>
+            <td><code>downloads</code></td>
+            <td>Saves the locally generated <code>.apkg</code> flashcard deck directly to your device's Downloads folder.</td>
+          </tr>
+          <tr>
+            <td><code>storage</code></td>
+            <td>Stores your selected UI language (<code>EN</code>/<code>PL</code>), local export counter, and optional Pro license key locally in <code>chrome.storage.local</code>.</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <h2>4. Contact</h2>
-    <p>Questions about this privacy policy can be sent to the support email listed on the Chrome Web Store listing.</p>
-  </main>
+      <h2>3. Optional Pro License Verification &amp; Payments (Polar.sh)</h2>
+      <p>
+        Using the Free tier requires no account and performs zero network requests outside your Moodle tab. If you choose to purchase or activate a Pro license key:
+      </p>
+      <ul>
+        <li><strong>Merchant of Record:</strong> Purchases, tax/VAT compliance, receipts, and payment processing are handled by <strong>Polar.sh</strong> (via Stripe). We never receive or store your credit card or banking details.</li>
+        <li><strong>License Activation Request:</strong> When you paste a license key in the extension's Pro panel and click <em>Activate</em>, the extension sends only the license key string and an anonymous extension label over HTTPS to Polar's Customer Portal API (<code>https://api.polar.sh/v1/customer-portal/license-keys/activate</code>). No Moodle pages, quiz text, or university data are ever sent in that request.</li>
+      </ul>
+
+      <h2>4. Chrome Web Store User Data Policy (Limited Use)</h2>
+      <p>
+        The use of information received from Google APIs or browser extension permissions will adhere to the Chrome Web Store User Data Policy, including the Limited Use requirements. Data accessed on a Moodle quiz review tab is used solely to provide the user-facing flashcard export functionality on that device and is never transferred to third parties.
+      </p>
+
+      <h2>5. Data Retention &amp; GDPR Rights</h2>
+      <p>
+        Because quiz data is never transmitted to our servers, there is no remote personal data to erase. You can remove all locally stored extension preferences and cached license status at any time by clearing extension storage or uninstalling the extension from your browser. For purchase or receipt records handled by Polar.sh, you can manage your order through the Polar customer portal link in your purchase confirmation email.
+      </p>
+
+      <h2>6. Contact</h2>
+      <p>
+        For privacy questions, bug reports, or support, open an issue at <a href="https://github.com/moodletoanki/moodletoanki.github.io/issues" target="_blank" rel="noopener">github.com/moodletoanki/moodletoanki.github.io/issues</a> or email <a href="mailto:moodletoanki@gmail.com">moodletoanki@gmail.com</a>.
+      </p>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Moodle to Anki Exporter</span>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="terms.html">Terms &amp; Refunds</a>
+        <a href="mailto:moodletoanki@gmail.com">moodletoanki@gmail.com</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
